@@ -10,7 +10,7 @@ import throttle from 'lodash.throttle';
 const refs = {
   feedbackForm: document.querySelector('.feedback-form'),
   email: document.querySelector('.feedback-form input'),
-  textArea: document.querySelector('.feedback-form textarea'),
+  message: document.querySelector('.feedback-form textarea'),
 };
 window.addEventListener('DOMContentLoaded', setFormValues);
 
@@ -18,15 +18,25 @@ const state = localStorage.getItem('feedback-form-state')
   ? JSON.parse(localStorage.getItem('feedback-form-state'))
   : {};
 
-refs.feedbackForm.addEventListener('submit', event => {
+refs.feedbackForm.addEventListener('submit', handleSubmitForm);
+
+refs.message.addEventListener('input', throttle(handleSetStorageState, 500));
+refs.email.addEventListener('input', throttle(handleSetStorageState, 500));
+
+function handleSubmitForm(event) {
   event.preventDefault();
-  console.log({ email: refs.email.value, message: refs.textArea.value });
+
+  const email = refs.email.value;
+  const message = refs.message.value;
+
+  if (!email.trim() || !message.trim()) {
+    return alert('Please, fill in all fields of the form');
+  }
+
+  console.log({ email, message });
   event.currentTarget.reset();
   localStorage.removeItem('feedback-form-state');
-});
-
-refs.textArea.addEventListener('input', throttle(handleSetStorageState, 500));
-refs.email.addEventListener('input', throttle(handleSetStorageState, 500));
+}
 
 function handleSetStorageState(event) {
   state[event.target.name] = event.target.value;
@@ -41,6 +51,6 @@ function setFormValues() {
     refs.email.value = savedData.email;
   }
   if (savedData.message) {
-    refs.textArea.value = savedData.message;
+    refs.message.value = savedData.message;
   }
 }

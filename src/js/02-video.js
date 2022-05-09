@@ -16,6 +16,9 @@ player.on(
 if (savedVideoTime) {
   player.setCurrentTime(savedVideoTime);
 }
+
+
+
 // player.getVideoTitle().then(function (title) {
 //   console.log('title:', title);
 // });
